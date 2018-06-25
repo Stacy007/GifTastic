@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <button data-animal="puppies">puppies</button>
+    <button data-animal="cats">cats</button>
+    <button data-animal="hamsters">hamsters</button>
+    <div id="target"></div>
+    <!-- <div id="gifs-appear-here"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    
+        $("button").on("click", function() {
+
+            $("#target").html("");
+            var animal =$(this).attr("data-animal");
+        var apiKey = "2IvIA8i0QZZFZegMRRfNazZ1ze5LkZGh"
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        animal + "&api_key=dc6zaTOxFJmzC&limit=10";
+         //"https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC"
+        //https://api.giphy.com/v1/gifs/search?q=${input}api_key=${input key here either directly or fromm the let above};
+        
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function (response) {
+            console.log(response);
+            let data = response.data;
+            
+            for (let i = 0; i < data.length; i++) {
+                let newDiv = $("<div>");
+
+                let p = $("<p>");
+                p.text(data[i].rating);
+
+                let img = $("<img>");
+                img.attr("src", data[i].images.fixed_height.url);
+                
+                newDiv.append(p);
+                newDiv.append(img);
+                $("#target").append(newDiv);
+
+            }
+        });
+    });
+        
+
+
+    </script>
+</body>
+</html>
