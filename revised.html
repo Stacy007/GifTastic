@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    .animal-button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        background-color: gray;
+        border-radius: 12px;
+    }
+    </style>
+</head>
+
+<body style="background-color: rgb(91, 68, 129)">
+    
+    <button data-animal="puppies" class="animal-button">puppies</button>
+    <button data-animal="cats" class="animal-button">cats</button>
+    <button data-animal="hamsters" class="animal-button">hamsters</button>
+    <div id="animal-buttons"></div>
+
+    <form id="animal-form">
+        <label for="animal-input"><h3>Add an animal</h3></label>
+        <input type="text" id="animal-input">
+        <input id="add-animal" type="submit" value="Submit">
+    </form>
+
+    <div id="target"></div>
+    <!-- <div id="gifs-appear-here"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var animalArr = [];
+
+        function renderButtons(array) {
+            $("#animal-buttons").empty();
+            console.log("buttons are rendering")
+
+            for (var i = 0; i < array.length; i++) {
+                var a = $("<button>");
+                a.attr("data-animal", array[i]);
+                a.addClass("animal-button")
+                a.text(array[i]);
+                $("#animal-buttons").append(a)
+            }
+        }
+
+        $(document).on("click", ".animal-button", function () {
+
+            $("#target").html("");
+            var animal = $(this).attr("data-animal");
+            var apiKey = "2IvIA8i0QZZFZegMRRfNazZ1ze5LkZGh"
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                animal + "&api_key=dc6zaTOxFJmzC&limit=10";
+            //"https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC"
+            //https://api.giphy.com/v1/gifs/search?q=${input}api_key=${input key here either directly or fromm the let above};
+
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+                console.log(response);
+                let data = response.data;
+
+                for (let i = 0; i < data.length; i++) {
+                    let newDiv = $("<div>");
+
+                    let p = $("<p>");
+                    p.text(data[i].rating);
+
+                    let img = $("<img>");
+                    let still = data[i].images.fixed_height_still.url;
+                    let animate = data[i].images.fixed_height.url;
+                    img.attr("src", still);
+                    img.attr("data-still", still)
+                    img.attr("data-animate", animate)
+                    img.attr("data-state", "still")
+                    img.addClass("animalImage")
+
+                    newDiv.append(p);
+                    newDiv.append(img);
+                    $("#target").append(newDiv);
+
+                }
+            });
+        });
+
+        $(document).on("click", ".animalImage", function () {
+            let state = $(this).attr("data-state")
+
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            }
+            else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+        })
+
+        $("#add-animal").on("click", function (event) {
+            event.preventDefault();
+            var newAnimal = $("#animal-input").val();
+            animalArr.push(newAnimal)
+            console.log(animalArr)
+            renderButtons(animalArr)
+        })
+
+        renderButtons(animalArr)
+
+    </script>
+</body>
+
+</html>
